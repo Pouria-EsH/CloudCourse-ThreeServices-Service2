@@ -35,7 +35,7 @@ func main() {
 	cloudamq_url := os.Getenv("CCSERV2_AMQP_URL")
 	cloudamq := broker.NewCloudAMQ(cloudamq_url, "cc-pr")
 
-	hf := &ext.HuggingFace{}
+	hf := ext.NewHuggingFace(os.Getenv("CCSERV2_HF_APIKEY"))
 
 	srv := service.NewService2(*database, *imagestore, *cloudamq, *hf)
 	err = srv.Execute()

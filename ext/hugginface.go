@@ -14,6 +14,12 @@ type HuggingFace struct {
 	apikey string
 }
 
+func NewHuggingFace(apiKey string) *HuggingFace {
+	return &HuggingFace{
+		apikey: apiKey,
+	}
+}
+
 func (hf HuggingFace) GetDiscription(fileBytes *bytes.Buffer) (string, error) {
 	if fileBytes == nil {
 		return "", fmt.Errorf("filebyte is null")
