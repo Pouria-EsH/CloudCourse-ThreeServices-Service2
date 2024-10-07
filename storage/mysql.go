@@ -28,6 +28,9 @@ func (mdb MySQLDB) SetStatus(requestId string, status string) error {
 	query := "UPDATE Requests SET RequestStatus=? WHERE RequestID=?"
 	_, err := mdb.rdatabase.Exec(query, status, requestId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return &RequestNotFoundError{ReqId: requestId}
+		}
 		return err
 	}
 	return nil
@@ -37,6 +40,9 @@ func (mdb MySQLDB) SetImageCaption(requestId string, imgcap string) error {
 	query := "UPDATE Requests SET ImageCaption=? WHERE RequestID=?"
 	_, err := mdb.rdatabase.Exec(query, imgcap, requestId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return &RequestNotFoundError{ReqId: requestId}
+		}
 		return err
 	}
 	return nil
