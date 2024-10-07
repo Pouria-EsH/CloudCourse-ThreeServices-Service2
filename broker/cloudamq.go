@@ -2,6 +2,7 @@ package broker
 
 import (
 	"fmt"
+	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -56,10 +57,12 @@ func (c CloudAMQ) Listen(handler func(msg string) error) error {
 		return err
 	}
 
+	log.Printf("Consumer started on %s from %s", q.Name, c.URL)
+
 	for d := range msgs {
 		err := handler(string(d.Body))
 		if err != nil {
-			return fmt.Errorf("error at amq handler: %w", err)
+			return fmt.Errorf("error at amq message handler: %w", err)
 		}
 	}
 

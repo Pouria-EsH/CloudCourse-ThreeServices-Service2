@@ -4,10 +4,11 @@ import (
 	"cc-service2/storage"
 	"errors"
 	"fmt"
+	"log"
 )
 
 func (s Service2) messageHandler(requestID string) error {
-	fmt.Printf("Received a new request: %s\n", requestID)
+	log.Printf("Received a new request: %s\n", requestID)
 
 	imgFile, err := s.PicStore.Download(requestID)
 	if err != nil || imgFile == nil {
@@ -23,14 +24,16 @@ func (s Service2) messageHandler(requestID string) error {
 
 	err = s.DataBase.SetImageCaption(requestID, caption)
 	if err != nil {
+		s.failureHandler(requestID)
 		return fmt.Errorf("error updating image caption: %w", err)
 	}
 
 	err = s.DataBase.SetStatus(requestID, "ready")
 	if err != nil {
+		s.failureHandler(requestID)
 		return fmt.Errorf("error updating request status: %w", err)
 	}
-	fmt.Printf("Request %s done successfuly\n", requestID)
+	log.Printf("Request %s done successfuly\n", requestID)
 	return nil
 }
 
@@ -39,9 +42,9 @@ func (s Service2) failureHandler(requstId string) {
 	if err != nil {
 		var notfound *storage.RequestNotFoundError
 		if !errors.As(err, &notfound) {
-			fmt.Printf("couldn't update request %s status to \"failed\": %v\n", requstId, err)
+			log.Printf("couldn't update request %s status to \"failed\": %v\n", requstId, err)
 		}
 		return
 	}
-	fmt.Printf("request %s status is set to 'failure'", requstId)
+	log.Printf("request %s status is set to 'failure'", requstId)
 }

@@ -27,15 +27,13 @@ func (hf HuggingFace) GetDiscription(fileBytes *bytes.Buffer) (string, error) {
 
 	resp, err := hf.sendHFHttpRequest(fileBytes)
 	if err != nil {
-		fmt.Println("Error reading response:", err)
-		return "", err
+		return "", fmt.Errorf("error reading response: %w", err)
 	}
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error reading response:", err)
-		return "", err
+		return "", fmt.Errorf("error reading response: %w", err)
 	}
 
 	return hf.parseResponse(respBody)
@@ -44,8 +42,7 @@ func (hf HuggingFace) GetDiscription(fileBytes *bytes.Buffer) (string, error) {
 func (hf HuggingFace) sendHFHttpRequest(img io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest("POST", VITGPT2_APIURL, img)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return nil, err
+		return nil, fmt.Errorf("error creating request: %w", err)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", hf.apikey))

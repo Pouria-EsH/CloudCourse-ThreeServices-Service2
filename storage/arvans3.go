@@ -48,7 +48,8 @@ func (p ArvanCloudS3) Download(key string) (*bytes.Buffer, error) {
 	buf := bytes.NewBuffer(buffer)
 	_, err = io.Copy(buf, obj.Body)
 	if err != nil {
-		fmt.Println("cant copy file")
+		return nil, fmt.Errorf("cant copy file to buffer: %w", err)
 	}
+
 	return buf, nil
 }
